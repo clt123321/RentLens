@@ -76,12 +76,8 @@ def filter_by_source(all_by_source):
         filtered = apply_filters(listings, max_results=9999)
         filtered_count = len(filtered)
 
-        if filtered_count < 10:
-            log(f"  {source_name}: 筛选后 {filtered_count} 条 (< 10条，完整保留全部内容)")
-            filtered_by_source[source_name] = filtered
-        else:
-            log(f"  {source_name}: 筛选后 {filtered_count} 条 (≥ 10条，保留筛选结果)")
-            filtered_by_source[source_name] = filtered
+        filtered_by_source[source_name] = filtered
+        log(f"  {source_name}: 筛选后 {filtered_count} 条")
 
         total += filtered_count
 
@@ -186,9 +182,6 @@ def filter_by_commute(filtered_by_source, max_minutes=COMMUTE_MAX_MINUTES):
 
 
 def build_search_context(args, all_by_source, filtered_by_source, total_raw, total_filtered):
-    from commute import CommuteCalculator
-    calc = CommuteCalculator()
-
     source_details = {}
     for source_name, listings in all_by_source.items():
         filtered_list = filtered_by_source.get(source_name, [])
@@ -207,9 +200,9 @@ def build_search_context(args, all_by_source, filtered_by_source, total_raw, tot
             "size_max": args.size_max,
             "destinations": [d["name"] for d in COMMUTE_DESTINATIONS],
             "commute_max": args.commute_max,
-            "ebike_speed": calc.EBIKE_SPEED_KMH,
-            "road_factor": calc.ROAD_FACTOR,
-            "ebike_max_km": calc.EBIKE_MAX_STRAIGHT_KM,
+            "ebike_speed": CommuteCalculator.EBIKE_SPEED_KMH,
+            "road_factor": CommuteCalculator.ROAD_FACTOR,
+            "ebike_max_km": CommuteCalculator.EBIKE_MAX_STRAIGHT_KM,
             "pages": args.pages,
         },
         "results": {

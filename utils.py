@@ -1,15 +1,6 @@
 import requests
 import time
 import random
-import sys
-import logging
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s",
-    datefmt="%H:%M:%S",
-)
-logger = logging.getLogger(__name__)
 
 MAX_RETRIES = 3
 BASE_DELAY = 3
