@@ -221,7 +221,7 @@ def _extract_sprite_positions(soup):
 
 
 def _solve_sprite_mapping(position_data, first_digit_positions, price_min=8000, price_max=15000):
-    all_positions = sorted(all_positions for all_positions in [set(p for positions in position_data for p in positions)])[0]
+    all_positions = sorted(set(p for positions in position_data for p in positions))
 
     pos_candidates = {}
     for pos in all_positions:
