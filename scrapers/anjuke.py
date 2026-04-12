@@ -3,7 +3,7 @@ import time
 import random
 import re
 from bs4 import BeautifulSoup
-from utils import safe_get, random_delay
+from utils import safe_get, random_delay, log
 from image_utils import upgrade_image_url
 
 
@@ -142,7 +142,8 @@ class AnjukeScraper:
                     "images": [img_url] if img_url != "No Image" else [],
                     "image_url": img_url,
                 })
-            except Exception:
+            except Exception as e:
+                log(f"  [安居客] 解析房源条目失败: {e}")
                 continue
 
         return listings
@@ -150,13 +151,13 @@ class AnjukeScraper:
     def scrape(self, pages=3, district="haidian", price_min=None, price_max=None):
         all_listings = []
         for page in range(1, pages + 1):
-            print(f"  [安居客] 正在抓取 {district} 第 {page} 页...")
+            log(f"  [安居客] 正在抓取 {district} 第 {page} 页...")
             html = self.fetch_list_page(page, district, price_min, price_max)
             if not html:
                 continue
 
             listings = self.parse_list_page(html)
-            print(f"  [安居客] 第 {page} 页获取到 {len(listings)} 条房源")
+            log(f"  [安居客] 第 {page} 页获取到 {len(listings)} 条房源")
 
             all_listings.extend(listings)
             random_delay(3, 6)

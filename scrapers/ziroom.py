@@ -139,7 +139,8 @@ def _parse_ziroom_html(html, price_min=8000, price_max=15000):
                 "image_url": img_url,
                 "subway_info": subway_info,
             })
-        except Exception:
+        except Exception as e:
+            log(f"  [自如] 解析房源条目失败: {e}")
             continue
 
     return listings

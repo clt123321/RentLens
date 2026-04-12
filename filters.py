@@ -229,35 +229,35 @@ def apply_filters(listings, budget_min=BUDGET_MIN, budget_max=BUDGET_MAX,
 
     logger = get_funnel_logger()
 
-    print(f"\n筛选前: {len(listings)} 条房源")
+    log(f"筛选前: {len(listings)} 条房源")
 
     listings = deduplicate(listings)
-    print(f"去重后: {len(listings)} 条")
+    log(f"去重后: {len(listings)} 条")
 
     budget_filtered = filter_by_budget(listings, budget_min, budget_max)
-    print(f"预算筛选 ({budget_min}-{budget_max}元): {len(budget_filtered)} 条")
+    log(f"预算筛选 ({budget_min}-{budget_max}元): {len(budget_filtered)} 条")
 
     if size_min > 0 or size_max > 0:
         size_filtered = filter_by_size(budget_filtered, size_min, size_max)
-        print(f"面积筛选 ({size_min}-{size_max}㎡): {len(size_filtered)} 条")
+        log(f"面积筛选 ({size_min}-{size_max}㎡): {len(size_filtered)} 条")
 
         if len(size_filtered) < 5:
             size_filtered = filter_by_size(budget_filtered, size_min, 120)
-            print(f"面积放宽 ({size_min}-120㎡): {len(size_filtered)} 条")
+            log(f"面积放宽 ({size_min}-120㎡): {len(size_filtered)} 条")
 
         if not size_filtered:
             size_filtered = budget_filtered
-            print(f"面积筛选无结果，回退到预算筛选结果")
+            log(f"面积筛选无结果，回退到预算筛选结果")
     else:
         size_filtered = budget_filtered
-        print(f"面积筛选: 已跳过（未设置面积限制）")
+        log(f"面积筛选: 已跳过（未设置面积限制）")
 
     district_filtered = filter_by_district(size_filtered)
-    print(f"区域筛选 (海淀区): {len(district_filtered)} 条")
+    log(f"区域筛选 (海淀区): {len(district_filtered)} 条")
 
     if not district_filtered:
         area_filtered = filter_by_area(size_filtered)
-        print(f"板块筛选 (海淀相关): {len(area_filtered)} 条")
+        log(f"板块筛选 (海淀相关): {len(area_filtered)} 条")
         final_filtered = area_filtered
     else:
         final_filtered = district_filtered
@@ -276,6 +276,6 @@ def apply_filters(listings, budget_min=BUDGET_MIN, budget_max=BUDGET_MAX,
         for item in final_filtered[max_results:]:
             logger.record_loss(item, "数量截取", f"超过最大保留数{max_results}条")
         final_filtered = final_filtered[:max_results]
-        print(f"截取前 {max_results} 条")
+        log(f"截取前 {max_results} 条")
 
     return final_filtered
