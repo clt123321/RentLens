@@ -272,7 +272,7 @@ def apply_filters(listings, budget_min=BUDGET_MIN, budget_max=BUDGET_MAX,
 
     final_filtered.sort(key=lambda x: (-len(x.get("matched_subway", [])), x.get("price_num", 0)))
 
-    if max_results and len(final_filtered) > max_results:
+    if max_results is not None and max_results > 0 and len(final_filtered) > max_results:
         for item in final_filtered[max_results:]:
             logger.record_loss(item, "数量截取", f"超过最大保留数{max_results}条")
         final_filtered = final_filtered[:max_results]

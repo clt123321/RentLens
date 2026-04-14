@@ -31,7 +31,6 @@ def safe_get(session, url, max_retries=MAX_RETRIES, **kwargs):
             resp = session.get(url, **kwargs)
             elapsed = time.time() - start
             log(f"  << 响应: {resp.status_code} ({elapsed:.1f}s)")
-            resp.raise_for_status()
 
             if resp.status_code == 429:
                 wait = random.uniform(10, 20)
@@ -39,6 +38,7 @@ def safe_get(session, url, max_retries=MAX_RETRIES, **kwargs):
                 time.sleep(wait)
                 continue
 
+            resp.raise_for_status()
             return resp
 
         except requests.exceptions.ConnectionError as e:

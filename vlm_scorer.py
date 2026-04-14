@@ -174,7 +174,7 @@ def evaluate_image_vibe(image_url, title="", price=""):
         }
     except (ValueError, json.JSONDecodeError) as e:
         log(f"  [VLM] {title[:20]}... -> JSON解析失败 ({elapsed:.1f}s)")
-        return {"ai_score": 0.0, "vibe_desc": "解析失败", "roast_comment": "", "raw_response": content[:200] if 'content' in dir() else ""}
+        return {"ai_score": 0.0, "vibe_desc": "解析失败", "roast_comment": "", "raw_response": content[:200] if 'content' in locals() else ""}
     except Exception as e:
         log(f"  [VLM] {title[:20]}... -> 异常: {e} ({elapsed:.1f}s)")
         return {"ai_score": 0.0, "vibe_desc": f"异常:{e}", "roast_comment": "", "raw_response": ""}
