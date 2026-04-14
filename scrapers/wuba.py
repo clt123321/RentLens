@@ -122,7 +122,8 @@ class WuBaScraper:
                     "images": [img_url] if img_url != "No Image" else [],
                     "image_url": img_url,
                 })
-            except Exception:
+            except Exception as e:
+                log(f"  [58同城] 解析房源条目失败: {e}")
                 continue
 
         return listings
@@ -131,13 +132,13 @@ class WuBaScraper:
         all_listings = []
         for page in range(1, pages + 1):
             label = f"海淀" if district else "全部区域"
-            print(f"  [58同城] 正在抓取{label}第 {page} 页...")
+            log(f"  [58同城] 正在抓取{label}第 {page} 页...")
             html = self.fetch_list_page(page, district=district)
             if not html:
                 continue
 
             listings = self.parse_list_page(html)
-            print(f"  [58同城] 第 {page} 页获取到 {len(listings)} 条房源")
+            log(f"  [58同城] 第 {page} 页获取到 {len(listings)} 条房源")
 
             all_listings.extend(listings)
             random_delay(2, 5)

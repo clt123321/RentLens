@@ -5,7 +5,7 @@ import re
 import os
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
-from utils import safe_get, random_delay
+from utils import safe_get, random_delay, log
 from image_utils import upgrade_image_url
 
 load_dotenv()
@@ -40,7 +40,7 @@ class BeikeScraper:
                     k, v = part.split("=", 1)
                     self.session.cookies.set(k.strip(), v.strip())
         else:
-            print("  [!] 未设置 BEIKE_COOKIE，贝壳数据可能无法获取")
+            log("  [!] 未设置 BEIKE_COOKIE，贝壳数据可能无法获取")
 
     def fetch_list_page(self, page=1, district="haidian", price_min=None, price_max=None):
         url = f"{self.BASE_URL}{district}/pg{page}/"
@@ -55,10 +55,10 @@ class BeikeScraper:
         if not resp:
             return None
         if "CAPTCHA" in resp.text[:500] or "captcha" in resp.text[:500].lower():
-            print(f"  [!] 贝壳第{page}页触发验证码(CAPTCHA)，Cookie 可能已过期或被风控")
+            log(f"  [!] 贝壳第{page}页触发验证码(CAPTCHA)，Cookie 可能已过期或被风控")
             return None
         if "登录" in resp.text[:500]:
-            print(f"  [!] 贝壳第{page}页需要登录，Cookie 可能已过期")
+            log(f"  [!] 贝壳第{page}页需要登录，Cookie 可能已过期")
             return None
         return resp.text
 
@@ -176,7 +176,8 @@ class BeikeScraper:
                     "image_url": img_url,
                     "geo_coords": geo_coords,
                 })
-            except Exception:
+            except Exception as e:
+                log(f"  [贝壳] 解析房源条目失败: {e}")
                 continue
 
         return listings
@@ -184,13 +185,13 @@ class BeikeScraper:
     def scrape(self, pages=3, district="haidian", price_min=None, price_max=None):
         all_listings = []
         for page in range(1, pages + 1):
-            print(f"  [贝壳] 正在抓取 {district} 第 {page} 页...")
+            log(f"  [贝壳] 正在抓取 {district} 第 {page} 页...")
             html = self.fetch_list_page(page, district, price_min, price_max)
             if not html:
                 continue
 
             listings = self.parse_list_page(html)
-            print(f"  [贝壳] 第 {page} 页获取到 {len(listings)} 条房源")
+            log(f"  [贝壳] 第 {page} 页获取到 {len(listings)} 条房源")
 
             all_listings.extend(listings)
             random_delay(4, 7)
