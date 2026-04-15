@@ -22,8 +22,8 @@
 ### 1. 环境准备
 
 ```bash
-git clone https://github.com/clt123321/rentRoom.git
-cd rentRoom
+git clone https://github.com/clt123321/RentLens.git
+cd RentLens
 
 python -m venv .venv
 # Windows:
